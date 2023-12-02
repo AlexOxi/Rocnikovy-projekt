@@ -28,14 +28,14 @@
 </template>
 
 <script lang="ts">
-import { toValue } from 'vue';
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, watch } from 'vue';
 import getTest from '../data/questions'
 
 
 
 
 export default defineComponent({
+
   name: 'IndexPage',
   setup() {
     const testId = 1
@@ -48,6 +48,21 @@ export default defineComponent({
     const questions = test.questions
     const v1 = ref(12)
     const answers = ref([])
+    const checkAnswers = () => {
+      answers.value.forEach(choiceId => {
+        const answerId = Math.trunc(choiceId / 1000);
+        const question = questions.find(q => q.id === answerId)
+        if (question) {
+          question.answered = true
+          console.log('Question answered ', question.label)
+        }
+      })
+    }
+
+    watch(answers, (val, oldval) => {
+      checkAnswers()
+    })
+
     return {
       questions,
       answers,
