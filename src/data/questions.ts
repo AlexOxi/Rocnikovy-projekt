@@ -1,4 +1,11 @@
 
+interface Test {
+  id: number,
+  label: string,
+  questions: Question[],
+
+}
+
 interface Question {
   id: number,
   label: string,
@@ -13,12 +20,6 @@ interface Choice {
   correct: boolean
 }
 
-interface Test {
-  id: number,
-  label: string,
-  questions: Question[],
-
-}
 
 let questions: Question[] = []
 const tests: Test[] = []
@@ -30,18 +31,18 @@ questions.push(
     answered: false,
     choices: [
       {
-        id: 1,
+        id: 1001,
         label: '15',
         hint: "Ved uz ma bradu pomaly mal by 15",
         correct: false
       },
       {
-        id: 2,
+        id: 1002,
         label: '18',
         correct: false
       },
       {
-        id: 3,
+        id: 1003,
         label: '17',
         correct: true
       }
@@ -52,17 +53,17 @@ questions.push(
     label: 'Kedy skoncila druha svetova vojna?',
     choices: [
       {
-        id: 1,
+        id: 2001,
         label: '1.maja 1932',
         correct: false
       },
       {
-        id: 2,
+        id: 2002,
         label: 'Neskoncila',
         correct: false
       },
       {
-        id: 3,
+        id: 2003,
         label: '9.maja 1945',
         correct: true
       }
@@ -72,7 +73,7 @@ questions.push(
 )
 
 tests.push({
-  id:1,
+  id: 1,
   label: 'dejepis',
   questions
 })
@@ -82,22 +83,22 @@ tests.push({
 questions = []
 questions.push(
   {
-    id: 2,
+    id: 3,
     label: 'Aku zbran ma Alex',
     answered: false,
     choices: [
       {
-        id: 1,
+        id: 3001,
         label: 'M4',
         correct: false
       },
       {
-        id: 2,
+        id: 3002,
         label: 'MK18',
         correct: false
       },
       {
-        id: 3,
+        id: 3003,
         label: 'Scar-L',
         correct: true
       }
@@ -106,21 +107,43 @@ questions.push(
 )
 
 tests.push({
-  id:2,
+  id: 2,
   label: 'Zbrane',
   questions
 })
-const getTest = (testId: number) => {
-  const test = tests.find((test) =>{
-   if(test.id === testId)
-   {
-    return true;
-   }
-   return false;
+
+export const getTest = (testId: number) => {
+  const test = tests.find((test) => {
+    if (test.id === testId) {
+      return true;
+    }
+    return false;
   })
 
   return test;
 }
 
+export const clearAllAnswerFlags = (questions: Question[]) => {
+  for (const question of questions) {
+    question.answered = false
+  }
 
-export default getTest;
+}
+
+
+export const getCorrectChoiceForQuestion = (question: Question) => {
+  const correctChoice = question.choices.find((c) => c.correct)
+  return correctChoice
+}
+
+export const getQuestionFromChoiceId = (choiceId: number, questions: Question[]) => {
+  for (const q of questions) {
+    for (const c of q.choices) {
+      if (c.id === choiceId) {
+        return q
+      }
+    }
+  }
+
+  return
+}
