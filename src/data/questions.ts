@@ -1,5 +1,5 @@
 
-interface Test {
+export interface Test {
   id: number,
   label: string,
   questions: Question[],

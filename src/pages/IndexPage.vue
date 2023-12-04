@@ -10,7 +10,7 @@
     <q-item tag="label" v-ripple v-for="(choice, idx) in question.choices" :key="choice.id * 1000 + choice.id">
       <q-item-section side class="text-bold">{{ idx + 1 }}.</q-item-section>
       <q-item-section side top>
-        <q-checkbox v-model="answers" :val="choice.id" />
+        <q-checkbox v-model="selectedChoices" :val="choice.id" />
       </q-item-section>
 
       <q-item-section>
@@ -22,31 +22,31 @@
     </q-item>
 
 
-    <q-separator spaced />
   </q-list>
 
 
   <q-btn label="Vyhodnotit" color="positive" @click="checkTest" :disable="!hasAllAnswers"></q-btn>
   <q-btn label="Ukoncit bez vyhodnotenia" color="negative" class="on-right" @click="exitTest"></q-btn>
+  <q-btn label="Reset" color="amber " @click="resetTest" class="on-right"></q-btn>
 
-
-  <div class="q-pa-md flex flex-center">
-  </div>
+  <result-component v-if="isShowResult" :test="test" :answers="selectedChoices" />
 </template>
 
 <script lang="ts">
 import { Ref, defineComponent, ref, watch } from 'vue';
-import { getTest, clearAllAnswerFlags, getCorrectChoiceForQuestion, getQuestionFromChoiceId } from '../data/questions'
+import { getTest, clearAllAnswerFlags, getQuestionFromChoiceId } from '../data/questions'
 import { computed } from 'vue';
-
+import ResultComponent from '../components/ResultComponent.vue'
 
 
 
 export default defineComponent({
 
   name: 'IndexPage',
+  components: { ResultComponent },
   setup() {
     const testId = 1
+    const isShowResult = ref(false)
     const test = getTest(testId);
 
     if (!test) {
@@ -63,26 +63,13 @@ export default defineComponent({
 
     }
 
+    const resetTest = () => {
+      isShowResult.value = false
+      selectedChoices.value = []
+    }
+
     const checkTest = () => {
-      // get test by id
-      // get selected choices
-      // go through all questions and test if selected choice is the correct one
-      // set question.correctAnswer = true/false
-
-      let correctChoiceCount = 0
-      let incorrectChoiceCount = 0
-
-      questions.value.forEach(q => {
-        const correctChoice = getCorrectChoiceForQuestion(q)
-        if (correctChoice) {
-          if (selectedChoices.value.includes(correctChoice.id)) {
-            correctChoiceCount++
-          } else {
-            incorrectChoiceCount++
-          }
-
-        }
-      });
+      isShowResult.value = true
     }
 
     const checkAnswers = () => {
@@ -110,11 +97,13 @@ export default defineComponent({
 
     return {
       questions,
-      answers: selectedChoices,
+      selectedChoices,
       test,
       exitTest,
       checkTest,
-      hasAllAnswers
+      hasAllAnswers,
+      isShowResult,
+      resetTest
     }
   }
 });
