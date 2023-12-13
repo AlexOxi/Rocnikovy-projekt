@@ -1,6 +1,6 @@
-# Anketa (rocnikovy-projekt)
+# Quasar App (quasar-icons)
 
-Rocnikovy projekt spse halova Bratislava
+A Quasar Project
 
 ## Install the dependencies
 ```bash

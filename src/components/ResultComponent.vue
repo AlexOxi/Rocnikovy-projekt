@@ -13,13 +13,17 @@
   </div>
   <q-list>
     <q-item v-for="q in test.questions" :key="q.id">
-      {{ q.label }}
+      <q-item-section>{{ q.label }}</q-item-section>
+      <q-item-section avatar>
+        <q-icon :color="q.isCorrectlyAnswered ? 'green': 'red'" :name="q.isCorrectlyAnswered ? 'done' : 'close'" />
+      </q-item-section>
     </q-item>
   </q-list>
 </template>
 <script setup lang="ts">
 
-import { Test, getCorrectChoiceForQuestion } from 'src/data/questions';
+import { Test, getCorrectChoiceForQuestion } from 'src/data/data-layer';
+import { onBeforeMount } from 'vue';
 import { onMounted, ref } from 'vue';
 import { PropType } from 'vue';
 import { defineProps } from 'vue';
@@ -38,21 +42,25 @@ const props = defineProps({
 
 let correctChoiceCount = ref(0)
 let incorrectChoiceCount = ref(0)
-onMounted(() => {
 
 
-
+const checkAnswers = () => {
   props.test.questions.forEach(q => {
     const correctChoice = getCorrectChoiceForQuestion(q)
     if (correctChoice) {
       if (props.answers.includes(correctChoice.id)) {
         correctChoiceCount.value++
+        q.isCorrectlyAnswered = true
       } else {
         incorrectChoiceCount.value++
+        q.isCorrectlyAnswered = false
       }
 
     }
   });
+}
+onBeforeMount(() => {
+  checkAnswers()
 })
 
 </script>
